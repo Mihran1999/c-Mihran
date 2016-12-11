@@ -13,34 +13,13 @@ const char wall = '#';
 const char empty = '.';
 const char treasure = '$';
 
-//destinations
-std::pair<int, int> up = { 1, 0 };
-std::pair<int, int> down = { -1, 0 };
-std::pair<int, int> left = { 0, 1 };
-std::pair<int, int> right = { 0, -1 };
-
-std::vector <std::pair<int, int>> destinations
-{
-	up,
-	down,
-	left,
-	right,
-};
-
+//Function Declarations
 bool GetPath(iBoard&, cBoard&);
 std::pair<int, int> GetTreasureCoords(cBoard&);
-void print(iBoard& b)
-{
-	for (int i = 0; i < b.size(); ++i)
-	{
-		for (int j = 0; j < b[0].size(); ++j)
-		{
-			std::cout << b[i][j] << " ";
-		}
-		std::cout << "\n";
-	}
-}
+std::vector<std::string> GetMoves(iBoard& iB, cBoard& cB);
+void PrintMoves(std::vector<std::string> v);
 
+//Main
 int main()
 {
 	int n, m;
@@ -55,8 +34,6 @@ int main()
 			std::cin >> matC[i][j];
 		}
 	}
-
-	
 
 	iBoard matI(n, rowInt(m, -1));
 	for (int i = 0; i < n; ++i)
@@ -75,9 +52,17 @@ int main()
 		std::cout << "Impossible";
 		return 0;
 	}
-	print(matI);
+	PrintMoves(GetMoves(matI, matC));
 }
 
+void PrintMoves(std::vector<std::string> v)
+{
+	for (int i = v.size() - 1; i >= 0; --i)
+	{
+		std::cout << v[i] << " ";
+	}
+	std::cout << "\n";
+}
 
 bool GetPath(iBoard& matI, cBoard& matC)
 {
@@ -125,11 +110,6 @@ bool GetPath(iBoard& matI, cBoard& matC)
 		{
 			return false;
 		}
-
-		//print(matI);
-		//std::cout << tr.first << " " << tr.second;
-		std::cout << matI[tr.first][tr.second];
-		std::cout << "\n";
 	}
 }
 
@@ -146,3 +126,37 @@ std::pair<int, int> GetTreasureCoords(cBoard& b)
 		}
 	}
 }
+
+std::vector<std::string> GetMoves(iBoard& iB, cBoard& cB)
+{
+	std::vector<std::string> v;
+	std::pair<int, int> tr = GetTreasureCoords(cB);
+
+	int i = tr.first, j = tr.second;
+
+	while (iB[i][j] != 0)
+	{
+		if (i > 0 && iB[i - 1][j] + 1 == iB[i][j])
+		{
+			v.push_back("Down");
+			--i;
+		}
+		else if (i + 1 < iB.size() && iB[i + 1][j] + 1 == iB[i][j])
+		{
+			v.push_back("Up");
+			++i;
+		}
+		else if (j > 0 && iB[i][j - 1] + 1 == iB[i][j])
+		{
+			v.push_back("Right");
+			--j;
+		}
+		else if (j + 1 < iB[0].size() && iB[i][j + 1] + 1 == iB[i][j])
+		{
+			v.push_back("Left");
+			++j;
+		}
+	}
+	return v;
+}
+
