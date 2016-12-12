@@ -8,9 +8,9 @@ typedef std::vector<rowInt> iBoard;
 typedef std::vector<rowChar> cBoard;
 
 //symbols
-const char me = 'P';
-const char wall = '#';
-const char empty = '.';
+const char me		= 'P';
+const char wall		= '#';
+const char empty	= '.';
 const char treasure = '$';
 
 //Function Declarations
