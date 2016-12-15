@@ -8,16 +8,19 @@ typedef std::vector<rowInt> iBoard;
 typedef std::vector<rowChar> cBoard;
 
 //symbols
-const char me		= 'P';
+const char me		= '*';
 const char wall		= '#';
 const char empty	= '.';
 const char treasure = '$';
 
 //Function Declarations
 bool GetPath(iBoard&, cBoard&);
+void PrintMoves(std::vector<std::string> v);
+void PrintCoords(std::vector<std::pair<int, int>> v);
 std::pair<int, int> GetTreasureCoords(cBoard&);
 std::vector<std::string> GetMoves(iBoard& iB, cBoard& cB);
-void PrintMoves(std::vector<std::string> v);
+std::vector<std::pair<int, int>> GetCoords(iBoard& iB, cBoard& cB);
+
 
 //Main
 int main()
@@ -49,10 +52,19 @@ int main()
 
 	if (!GetPath(matI, matC))
 	{
-		std::cout << "Impossible";
+		std::cout << "Impossible \n";
 		return 0;
 	}
 	PrintMoves(GetMoves(matI, matC));
+	PrintCoords(GetCoords(matI, matC));
+}
+
+void PrintCoords(std::vector<std::pair<int, int>> v)
+{
+	for (int i = v.size() - 1; i >= 0; --i)
+	{
+		std::cout << "(" << v[i].first << "," << v[i].second << ")";
+	}
 }
 
 void PrintMoves(std::vector<std::string> v)
@@ -133,30 +145,73 @@ std::vector<std::string> GetMoves(iBoard& iB, cBoard& cB)
 	std::pair<int, int> tr = GetTreasureCoords(cB);
 
 	int i = tr.first, j = tr.second;
+	int count = 0;
 
 	while (iB[i][j] != 0)
 	{
 		if (i > 0 && iB[i - 1][j] + 1 == iB[i][j])
 		{
-			v.push_back("Down");
+			v.push_back("D");
+			--i;
+			++count;
+		}
+		else if (i + 1 < iB.size() && iB[i + 1][j] + 1 == iB[i][j])
+		{
+			v.push_back("U");
+			++i;
+			++count;
+		}
+		else if (j > 0 && iB[i][j - 1] + 1 == iB[i][j])
+		{
+			v.push_back("R");
+			--j;
+			++count;
+		}
+		else if (j + 1 < iB[0].size() && iB[i][j + 1] + 1 == iB[i][j])
+		{
+			v.push_back("L");
+			++j;
+			++count;
+		}
+	}
+	std::cout << "Yes  \n" << count << "\n";
+
+	return v;
+}
+
+std::vector<std::pair<int, int>> GetCoords(iBoard& iB, cBoard& cB)
+{
+	std::vector<std::pair<int, int>> v;
+	std::pair<int, int> tr = GetTreasureCoords(cB);
+
+	int i = tr.first, j = tr.second;
+
+	while (iB[i][j] != 0)
+	{
+		if (i > 0 && iB[i - 1][j] + 1 == iB[i][j])
+		{
+			v.push_back(std::make_pair(i, j));
 			--i;
 		}
 		else if (i + 1 < iB.size() && iB[i + 1][j] + 1 == iB[i][j])
 		{
-			v.push_back("Up");
+			v.push_back(std::make_pair(i, j));
 			++i;
 		}
 		else if (j > 0 && iB[i][j - 1] + 1 == iB[i][j])
 		{
-			v.push_back("Right");
+			v.push_back(std::make_pair(i, j));
 			--j;
 		}
 		else if (j + 1 < iB[0].size() && iB[i][j + 1] + 1 == iB[i][j])
 		{
-			v.push_back("Left");
+			v.push_back(std::make_pair(i, j));
 			++j;
+		}
+		if (iB[i][j] == 0)
+		{
+			v.push_back(std::make_pair(i, j));
 		}
 	}
 	return v;
 }
-
